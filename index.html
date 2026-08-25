@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hybrid V2 · Multi-UI</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            transition: background 0.5s ease, color 0.5s ease;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+        }
+
+        /* Light mode class on body */
+        body.light {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            color: #1a1a2e;
+        }
+
+        /* ===== MAIN CARD ===== */
+        .hybrid-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 40px;
+            padding: 2.5rem 2.8rem;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            transition: background 0.5s ease, border 0.5s ease, box-shadow 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Light mode card */
+        body.light .hybrid-card {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Animated border glow (hybrid effect) */
+        .hybrid-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 42px;
+            background: conic-gradient(from 0deg, #f093fb, #f5576c, #4facfe, #43e97b, #f093fb);
+            z-index: -1;
+            animation: spinBorder 6s linear infinite;
+            opacity: 0.5;
+            transition: opacity 0.5s ease;
+        }
+
+        body.light .hybrid-card::before {
+            opacity: 0.3;
+        }
+
+        @keyframes spinBorder {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== HEADER ===== */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .card-header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(120deg, #f093fb, #f5576c, #4facfe);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 4s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        body.light .badge {
+            background: rgba(0, 0, 0, 0.06);
+            border-color: rgba(0, 0, 0, 0.1);
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        /* ===== CLOCK ===== */
+        .clock {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            font-variant-numeric: tabular-nums;
+            margin-bottom: 0.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            transition: color 0.5s ease;
+        }
+
+        body.light .clock {
+            color: #1a1a2e;
+        }
+
+        .clock-label {
+            text-align: center;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: rgba(255, 255, 255, 0.35);
+            margin-bottom: 1.8rem;
+            transition: color 0.5s ease;
+        }
+
+        body.light .clock-label {
+            color: rgba(0, 0, 0, 0.35);
+        }
+
+        /* ===== HYBRID GRID ===== */
+        .hybrid-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        @media (max-width: 480px) {
+            .hybrid-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== COUNTER CARD ===== */
+        .counter-box {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            padding: 1.2rem 1rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: background 0.4s ease, border 0.4s ease;
+        }
+
+        body.light .counter-box {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .counter-box .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 0.4rem;
+        }
+
+        body.light .counter-box .label {
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        .counter-value {
+            font-size: 2.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .counter-controls {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .counter-controls button {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.light .counter-controls button {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 0, 0, 0.08);
+            color: #1a1a2e;
+        }
+
+        .counter-controls button:hover {
+            background: rgba(245, 87, 108, 0.3);
+            transform: scale(1.08);
+        }
+
+        .counter-controls button:active {
+            transform: scale(0.92);
+        }
+
+        /* ===== THEME TOGGLE ===== */
+        .theme-box {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            padding: 1.2rem 1rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: background 0.4s ease, border 0.4s ease;
+        }
+
+        body.light .theme-box {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .theme-box .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 0.6rem;
+        }
+
+        body.light .theme-box .label {
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Toggle switch - hybrid style */
+        .toggle-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .toggle-wrap span {
+            font-size: 0.85rem;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .toggle-wrap span.active {
+            opacity: 1;
+        }
+
+        .toggle {
+            width: 56px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            position: relative;
+            transition: background 0.4s ease, border 0.4s ease;
+            flex-shrink: 0;
+        }
+
+        body.light .toggle {
+            background: rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+
+        .toggle .knob {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            border-radius: 40px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+        }
+
+        .toggle.active .knob {
+            transform: translateX(26px);
+            background: linear-gradient(135deg, #4facfe, #43e97b);
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4);
+        }
+
+        /* ===== RESET BUTTON (extra hybrid) ===== */
+        .reset-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.4);
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 0.6rem;
+            letter-spacing: 1px;
+        }
+
+        body.light .reset-btn {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 0, 0, 0.06);
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        .reset-btn:hover {
+            background: rgba(245, 87, 108, 0.15);
+            color: #fff;
+            border-color: rgba(245, 87, 108, 0.3);
+        }
+
+        body.light .reset-btn:hover {
+            background: rgba(245, 87, 108, 0.1);
+            color: #1a1a2e;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer-note {
+            text-align: center;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.2);
+            margin-top: 1.2rem;
+            letter-spacing: 2px;
+            transition: color 0.5s ease;
+        }
+
+        body.light .footer-note {
+            color: rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hybrid-card">
+
+        <!-- Header -->
+        <div class="card-header">
+            <h1>Hybrid V2</h1>
+            <span class="badge">⚡ Multi-UI</span>
+        </div>
+
+        <!-- Real-time Clock -->
+        <div class="clock" id="clockDisplay">00:00:00</div>
+        <div class="clock-label">⏱️ live clock</div>
+
+        <!-- Hybrid Grid -->
+        <div class="hybrid-grid">
+
+            <!-- Counter -->
+            <div class="counter-box">
+                <div class="label">🧮 Counter</div>
+                <div class="counter-value" id="counterValue">0</div>
+                <div class="counter-controls">
+                    <button id="decBtn">−</button>
+                    <button id="incBtn">+</button>
+                </div>
+            </div>
+
+            <!-- Theme Toggle -->
+            <div class="theme-box">
+                <div class="label">🌓 Theme</div>
+                <div class="toggle-wrap">
+                    <span id="darkLabel" class="active">Dark</span>
+                    <div class="toggle" id="themeToggle">
+                        <div class="knob"></div>
+                    </div>
+                    <span id="lightLabel">Light</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Reset button (hybrid extra) -->
+        <button class="reset-btn" id="resetBtn">⟳ Reset Counter</button>
+
+        <div class="footer-note">✦ hybrid v2 · dark · light · glass · live ✦</div>
+    </div>
+
+    <script>
+        // ========================================
+        // 1. CLOCK
+        // ========================================
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clockDisplay').textContent = `${h}:${m}:${s}`;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // ========================================
+        // 2. COUNTER
+        // ========================================
+        let counter = 0;
+        const counterEl = document.getElementById('counterValue');
+
+        function updateCounter() {
+            counterEl.textContent = counter;
+        }
+
+        document.getElementById('incBtn').addEventListener('click', () => {
+            counter++;
+            updateCounter();
+        });
+
+        document.getElementById('decBtn').addEventListener('click', () => {
+            counter--;
+            updateCounter();
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            counter = 0;
+            updateCounter();
+        });
+
+        // ========================================
+        // 3. THEME TOGGLE (Dark / Light)
+        // ========================================
+        const toggle = document.getElementById('themeToggle');
+        const darkLabel = document.getElementById('darkLabel');
+        const lightLabel = document.getElementById('lightLabel');
+
+        toggle.addEventListener('click', () => {
+            document.body.classList.toggle('light');
+            toggle.classList.toggle('active');
+
+            // Update label highlights
+            if (document.body.classList.contains('light')) {
+                darkLabel.classList.remove('active');
+                lightLabel.classList.add('active');
+            } else {
+                darkLabel.classList.add('active');
+                lightLabel.classList.remove('active');
+            }
+        });
+
+        // ========================================
+        // 4. KEYBOARD SHORTCUTS (hybrid bonus)
+        // ========================================
+        document.addEventListener('keydown', (e) => {
+            // ArrowUp → increment, ArrowDown → decrement
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                counter++;
+                updateCounter();
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                counter--;
+                updateCounter();
+            } else if (e.key === 'r' || e.key === 'R') {
+                // Press 'R' to reset
+                counter = 0;
+                updateCounter();
+            } else if (e.key === 't' || e.key === 'T') {
+                // Press 'T' to toggle theme
+                toggle.click();
+            }
+        });
+
+        // ========================================
+        // 5. INITIAL STATE: dark mode by default
+        // ========================================
+        // (already dark from CSS)
+        console.log('✨ Hybrid V2 ready — try arrow keys, R, T');
+    </script>
+
+</body>
+</html>
